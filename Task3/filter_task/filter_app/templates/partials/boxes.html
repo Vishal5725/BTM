@@ -1,0 +1,14 @@
+{% if boxes %}
+    {% for box in boxes %}
+    <div class="col-md-4" data-aos="zoom-in">
+        <div class="box">
+            <h5>Category: {{ box.category }}</h5>
+            <p>Location: {{ box.location }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="text-center mt-4">
+        <h5>Sorry, no results found for the selected filters. Please try another.</h5>
+    </div>
+{% endif %}
