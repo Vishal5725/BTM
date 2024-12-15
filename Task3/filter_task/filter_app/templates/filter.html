@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Boxes</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- AOS CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .box {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .box h5 {
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-info text-danger">
+    <div class="container">
+        <h1 class="text-center mb-4" data-aos="zoom-in" data-aos-delay="200">Filter Boxes by Location and Category</h1>
+        <!-- Dropdown Filters -->
+        <form id="filterForm" method="get" class="row mb-4" data-aos="zoom-out" data-aos-delay="400">
+            <div class="col-md-6">
+                <label for="locationFilter" class="form-label">Filter by Location:</label>
+                <select id="locationFilter" name="location" class="form-select">
+                    {% for location in locations %}
+                        <option value="{{ location }}" {% if location == selected_location %}selected{% endif %}>{{ location }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="categoryFilter" class="form-label">Filter by Category:</label>
+                <select id="categoryFilter" name="category" class="form-select">
+                    {% for category in categories %}
+                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+        <!-- Boxes -->
+        <div id="boxesContainer" class="row" data-aos-delay="600" data-aos="zoom-out">
+            {% if boxes %}
+            {% for box in boxes %}
+            <div class="col-md-4" data-aos="zoom-in">
+                <div class="box">
+                    <h5>Category: {{ box.category }}</h5>
+                    <p>Location: {{ box.location }}</p>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center mt-4">
+                <h5>Sorry no results found for the selected filters try another please.</h5>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select the form and dropdowns
+            const locationFilter = document.getElementById('locationFilter');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const boxesContainer = document.getElementById('boxesContainer');
+        
+            // Add event listeners for the dropdowns
+            locationFilter.addEventListener('change', updateFilters);
+            categoryFilter.addEventListener('change', updateFilters);
+        
+            // Function to handle dropdown changes
+            function updateFilters() {
+                const location = locationFilter.value;
+                const category = categoryFilter.value;
+        
+                fetch(`/?location=${location}&category=${category}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    boxesContainer.innerHTML = html; // Update the box content
+                    AOS.refresh(); // Reinitialize animations (if any)
+                })
+                .catch(error => console.error('Error fetching filtered data:', error));
+            }
+        });
+        
+    </script>
+</body>
+</html>
