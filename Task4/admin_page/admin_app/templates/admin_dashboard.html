@@ -1,0 +1,46 @@
+{% extends 'home.html' %}
+{% block main-content %}
+<div class="container my-5">
+  <h1 class="text-center">{{ page_title }}</h1>
+  <div class="mt-5">
+    <h3>Your Products</h3>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ product.name }}</td>
+            <td>Rs.{{ product.price }}</td>
+            <td>{{ product.stock }}</td>
+            <td>
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="50" />
+              {% else %}
+                No Image
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'delete_product' product.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center">No products available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{% url 'add_product' %}" class="btn btn-success">Add New Product</a>
+  </div>
+</div>
+{% endblock main-content %}
